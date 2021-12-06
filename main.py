@@ -8,7 +8,7 @@ BLOCK_SIZE = 20
 
 
 class Game:
-    """Game class. Game logica and variables are self contained in the object"""
+    """Game class. Game logic and variables are self contained in the object"""
 
     def __init__(self):
         # game variables
@@ -17,7 +17,7 @@ class Game:
 
         # creating of an instance of each object needed
         self.snake = Snake(BLOCK_SIZE, BOUNDS)
-        self.food = Food(BLOCK_SIZE, BOUNDS)
+        self.food = Food(BLOCK_SIZE, BOUNDS, self.snake)
 
     def events(self, game):
         """Returns True if the game need to be stopped"""
@@ -25,11 +25,29 @@ class Game:
             if event.type == game.QUIT:
                 return True
 
+    def check_food(self):
+        """
+        This methid checks if the head of the snake is in the position of the
+        food. If True, then the snake eats the food and the food respawns.
+        Then the score of the game increases by 10.
+        """
+        if self.snake.body[-1] == self.food.position:
+            self.snake.eat()
+            self.food.spawn(self.snake)
+            self.points += 10
+
     def evolve(self, game):
-        """This method evolves the state of the game by moving the snake
-        and creating new food if the last was eaten"""
+        """
+        This method evolves the state of the game by moving the snake
+        and creating new food if the last was eaten. 
+        It checks if the gamee is over and returns the status
+        """
         self.snake.steer(game)
         self.snake.move()
+        self.check_food()
+        self.game_over = self.snake.check_tail_collision()
+
+        return self.game_over
 
     def draw(self, game, window):
         """
@@ -62,7 +80,7 @@ def main():
 
         stop = game.events(pygame)
 
-        game.evolve(pygame)
+        stop = game.evolve(pygame)
 
         game.draw(pygame, window)
 

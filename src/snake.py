@@ -29,6 +29,23 @@ class Snake:
         self.direction = Direction.DOWN
         self.body = [(20, 20), (20, 40), (20, 60)]
 
+    def eat(self):
+        """Method to define the behavior or the snake when it eats a food."""
+        self.length += 1
+
+    def check_tail_collision(self):
+        """
+        This method checks if the head of the snake is in the same position as
+        any other of its body segments and returns True if it is.
+        """
+        self_collision = False
+
+        for i in range(len(self.body) - 1):
+            if self.body[-1] == self.body[i]:
+                self_collssion = True
+
+        return self_collssion
+
     def draw(self, game, window):
         """Draws Snake in the display using an instance of pygame as 'game'
         and an instance of the surface to be drawn to as ' window' """
