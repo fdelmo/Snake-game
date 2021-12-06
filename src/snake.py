@@ -42,9 +42,9 @@ class Snake:
 
         for i in range(len(self.body) - 1):
             if self.body[-1] == self.body[i]:
-                self_collssion = True
+                self_collision = True
 
-        return self_collssion
+        return self_collision
 
     def draw(self, game, window):
         """Draws Snake in the display using an instance of pygame as 'game'
@@ -62,13 +62,25 @@ class Snake:
         """
         curr_head = self.body[-1]
         if self.direction == Direction.DOWN:
-            new_head = (curr_head[0], curr_head[1]+self.block_size)
+            if curr_head[1]+self.block_size >= self.bounds[1]:
+                new_head = (curr_head[0], 0)
+            else:
+                new_head = (curr_head[0], curr_head[1]+self.block_size)
         elif self.direction == Direction.UP:
-            new_head = (curr_head[0], curr_head[1]-self.block_size)
+            if curr_head[1]-self.block_size < 0:
+                new_head = (curr_head[0], self.bounds[1])
+            else:
+                new_head = (curr_head[0], curr_head[1]-self.block_size)
         elif self.direction == Direction.RIGHT:
-            new_head = (curr_head[0]+self.block_size, curr_head[1])
+            if curr_head[0]+self.block_size >= self.bounds[0]:
+                new_head = (0, curr_head[1])
+            else:
+                new_head = (curr_head[0]+self.block_size, curr_head[1])
         elif self.direction == Direction.LEFT:
-            new_head = (curr_head[0]-self.block_size, curr_head[1])
+            if curr_head[0]-self.block_size < 0:
+                new_head = (self.bounds[0], curr_head[1])
+            else:
+                new_head = (curr_head[0]-self.block_size, curr_head[1])
 
         self.body.append(new_head)
 
