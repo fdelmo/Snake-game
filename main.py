@@ -75,12 +75,12 @@ def main():
 
     stop = False
 
-    while not stop:
+    while (not stop) & (game.game_over == False):
         pygame.time.delay(80)
 
         stop = game.events(pygame)
 
-        stop = game.evolve(pygame)
+        game.evolve(pygame)
 
         game.draw(pygame, window)
 
