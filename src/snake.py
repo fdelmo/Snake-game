@@ -27,7 +27,11 @@ class Snake:
         """Resets the snake to the initial state"""
         self.length = 3
         self.direction = Direction.DOWN
-        self.body = [(20, 20), (20, 40), (20, 60)]
+        self.body = [
+            (self.block_size, self.block_size),
+            (self.block_size, 2*self.block_size),
+            (self.block_size, 3*self.block_size)
+        ]
 
     def eat(self):
         """Method to define the behavior or the snake when it eats a food."""
