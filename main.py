@@ -3,8 +3,8 @@ from src.snake import *
 from src.food import Food
 
 #global variables
-BOUNDS = (700, 700)
-BLOCK_SIZE = 20
+BOUNDS = (500, 500)
+BLOCK_SIZE = 25
 
 
 class Game:

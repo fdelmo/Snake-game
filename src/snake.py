@@ -68,7 +68,7 @@ class Snake:
                 new_head = (curr_head[0], curr_head[1]+self.block_size)
         elif self.direction == Direction.UP:
             if curr_head[1]-self.block_size < 0:
-                new_head = (curr_head[0], self.bounds[1])
+                new_head = (curr_head[0], self.bounds[1]-self.block_size)
             else:
                 new_head = (curr_head[0], curr_head[1]-self.block_size)
         elif self.direction == Direction.RIGHT:
@@ -78,7 +78,7 @@ class Snake:
                 new_head = (curr_head[0]+self.block_size, curr_head[1])
         elif self.direction == Direction.LEFT:
             if curr_head[0]-self.block_size < 0:
-                new_head = (self.bounds[0], curr_head[1])
+                new_head = (self.bounds[0]-self.block_size, curr_head[1])
             else:
                 new_head = (curr_head[0]-self.block_size, curr_head[1])
 
