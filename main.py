@@ -12,12 +12,23 @@ class Game:
 
     def __init__(self):
         # game variables
-        self.points = 0
+        self.score = 0
+        self.score_font = pygame.font.Font('freesansbold.ttf', 16)
         self.game_over = False
 
         # creating of an instance of each object needed
         self.snake = Snake(BLOCK_SIZE, BOUNDS)
         self.food = Food(BLOCK_SIZE, BOUNDS, self.snake)
+
+    def print_score(self, window, pos_x, pos_y):
+        """
+        This method is to  be called in the later method 'draw'. This one takes
+        responsability of rendering the score in the screen on each frame.
+        """
+        score_render = self.score_font.render(
+            f'Score: {self.score}', True, (255, 97, 3))
+
+        window.blit(score_render, (pos_x, pos_y))
 
     def events(self, game):
         """Returns True if the game need to be stopped"""
@@ -34,7 +45,7 @@ class Game:
         if self.snake.body[-1] == self.food.position:
             self.snake.eat()
             self.food.spawn(self.snake)
-            self.points += 10
+            self.score += 10
 
     def evolve(self, game):
         """
@@ -59,6 +70,9 @@ class Game:
         # draw all objects in screen
         self.snake.draw(game, window)
         self.food.draw(game, window)
+
+        # draw score
+        self.print_score(window, pos_x=BOUNDS[1]-100, pos_y=10)
 
         game.display.flip()
 
