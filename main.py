@@ -76,7 +76,7 @@ def main():
     stop = False
 
     while (not stop) & (game.game_over == False):
-        pygame.time.delay(80)
+        pygame.time.delay(90)
 
         stop = game.events(pygame)
 
