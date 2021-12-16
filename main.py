@@ -1,5 +1,4 @@
 import pygame
-import os
 import pickle
 from datetime import date
 from pygame.constants import CONTROLLER_BUTTON_MAX
@@ -23,11 +22,6 @@ class Game:
         # creating of an instance of each object needed
         self.snake = Snake(BLOCK_SIZE, BOUNDS)
         self.food = Food(BLOCK_SIZE, BOUNDS, self.snake)
-
-        # check (and create) the 'records' csv file
-        path = os.path.join(os.getcwd(), 'Data')
-        if not os.path.isdir(path):
-            os.mkdir(path)
 
     def print_score(self, window, pos_x, pos_y):
         """
@@ -64,12 +58,59 @@ class Game:
 
     def read_records(self):
         """
-        Method to read historic records of the game from disk.
+        Method to read historic records of the game from disk. Returns a list
+        with dictionaries with info of the top 5 records.
         """
-        with open('test_records.pck', 'rb') as handle:
-            test_read_dics = pickle.load(handle)
+        try:
+            with open('records.pck', 'rb') as handle:
+                records = pickle.load(handle)
 
-        print(test_read_dics)
+        except:
+            # TODO: Temporary command.
+            records = []
+            print('There is no record history')
+
+        return records
+
+    def save_record(self, records, user):
+        """
+        This method checks if the current score is in the top N records and stores
+        it in the correct position if it is. It also stores the date and username.
+        """
+
+        records.append({
+            "user": user,
+            "record": self.score,
+            "date": date.today()
+        })
+
+        # sort the records
+        records = sorted(records, key=lambda k: k['record'], reverse=True)
+
+        if len(records) > 3:
+            records.pop()  # ensure that there are only 5 top records
+
+        # save the records to disk
+        with open('records.pck', 'wb') as handle:
+            pickle.dump(records, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+    def check_record(self):
+        """
+        This method checks if the current score is in the top 5 record scores.
+        If so, it calls the save_record method.
+        """
+
+        records = self.read_records()
+
+        # TODO: change length to 5 after testing
+        if len(records) < 3:
+            self.save_record(records, 'test_user')
+            return True
+        elif self.score > records[-1]["record"]:
+            self.save_record(records, 'test_user')
+            return True
+        else:
+            return False
 
     def events(self, game):
         """Returns True if the game need to be stopped"""
@@ -139,8 +180,10 @@ def main():
 
         game.draw(pygame, window)
 
-    game.read_records()
-
+    # testing record storing
+    game.score = 370
+    # game.check_record()
+    print(game.read_records())
     pygame.quit()
 
 
