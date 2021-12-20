@@ -33,29 +33,6 @@ class Game:
 
         window.blit(score_render, (pos_x, pos_y))
 
-    def test_save(self):
-        """
-        TO REMOVE!!
-        """
-        test_dics = [{
-            'user': 'Ferran',
-            'record': 1000,
-            'date': date.today()
-        },
-            {
-                'user': 'Jans',
-                'record': 800,
-                'date': date.today()
-        },
-            {
-                'user': 'Alpha',
-                'record': 300,
-                'date': date.today()
-        }]
-
-        with open('test_records.pck', 'wb') as handle:
-            pickle.dump(test_dics, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
     def read_records(self):
         """
         Method to read historic records of the game from disk. Returns a list
