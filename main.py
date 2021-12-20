@@ -45,7 +45,7 @@ class Game:
         except:
             # TODO: Temporary command.
             records = []
-            print('There is no record history')
+            print('Empty records file created!')
 
         return records
 
@@ -64,7 +64,7 @@ class Game:
         # sort the records
         records = sorted(records, key=lambda k: k['record'], reverse=True)
 
-        if len(records) > 3:
+        if len(records) > 5:
             records.pop()  # ensure that there are only 5 top records
 
         # save the records to disk
@@ -80,11 +80,11 @@ class Game:
         records = self.read_records()
 
         # TODO: change length to 5 after testing
-        if len(records) < 3:
-            self.save_record(records, 'test_user')
+        if len(records) < 5:
+            self.save_record(records, 'Jans')
             return True
         elif self.score > records[-1]["record"]:
-            self.save_record(records, 'test_user')
+            self.save_record(records, 'Jans')
             return True
         else:
             return False
@@ -157,9 +157,8 @@ def main():
 
         game.draw(pygame, window)
 
-    # testing record storing
-    game.score = 370
-    # game.check_record()
+    game.check_record()
+
     print(game.read_records())
     pygame.quit()
 
