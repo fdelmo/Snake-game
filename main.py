@@ -42,8 +42,8 @@ class Game:
             with open('records.pck', 'rb') as handle:
                 records = pickle.load(handle)
 
-        except:
-            # TODO: Temporary command.
+        except FileNotFoundError:
+            # TODO: Maybe change this to dict?
             records = []
             print('Empty records file created!')
 
@@ -79,12 +79,11 @@ class Game:
 
         records = self.read_records()
 
-        # TODO: change length to 5 after testing
         if len(records) < 5:
-            self.save_record(records, 'Jans')
+            self.save_record(records, 'Test_user')
             return True
         elif self.score > records[-1]["record"]:
-            self.save_record(records, 'Jans')
+            self.save_record(records, 'Test_user')
             return True
         else:
             return False
@@ -116,8 +115,6 @@ class Game:
         self.snake.move()
         self.check_food()
         self.game_over = self.snake.check_tail_collision()
-
-        return self.game_over
 
     def draw(self, game, window):
         """
