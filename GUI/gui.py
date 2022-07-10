@@ -1,4 +1,5 @@
 from pickle import FRAME
+from pickletools import UP_TO_NEWLINE
 import tkinter as tk
 from turtle import down
 from typing import *
@@ -35,7 +36,15 @@ class GUI:
         button.pack(side=tk.BOTTOM)
 
     def InitialMenu(self) -> None:
-        pass
+        """
+        Start menu of the game, where we can choose between playing solo,
+        multiplayer, vs AI or view records.
+        """
+        frame1u = tk.Frame(self.window)
+        frame1u.pack(side=tk.TOP)
+
+        frame1d = tk.Frame(self.window)
+        frame1d.pack(side=tk.BOTTOM)
 
 
 if __name__ == '__main__':
@@ -43,5 +52,5 @@ if __name__ == '__main__':
 
     gui.WelcomeScreen()
 
-    # main loop
+    # main looP
     gui.window.mainloop()
