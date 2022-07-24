@@ -17,6 +17,14 @@ class GUI:
         self.window.eval('tk::PlaceWindow . center')
         self.welcome_text = "This is a prototype to test the GUI of SnAIke. \n Enjoy the ride!"
 
+    def clean_window(self) -> None:
+        """
+        Method to remove the widgets and sprites in window and clean it 
+        before rendering the next screen.
+        """
+        for widget in self.window.winfo_children():
+            widget.destroy()
+
     def WelcomeScreen(self) -> None:
         """
         Welcome screen with welcome message, play button and learn more button.
@@ -40,11 +48,70 @@ class GUI:
         Start menu of the game, where we can choose between playing solo,
         multiplayer, vs AI or view records.
         """
-        frame1u = tk.Frame(self.window)
-        frame1u.pack(side=tk.TOP)
 
-        frame1d = tk.Frame(self.window)
-        frame1d.pack(side=tk.BOTTOM)
+        # clean the window of widgets and sprites
+        self.clean_window()
+
+        # Setting the frames
+        frameu = tk.Frame(self.window)
+        frameu.pack(side=tk.TOP)
+
+        framed = tk.Frame(self.window)
+        framed.pack(side=tk.BOTTOM)
+
+        frame1ua = tk.Frame(frameu)
+        frame1ua.pack(side=tk.LEFT)
+
+        frame1ub = tk.Frame(frameu)
+        frame1ub.pack(side=tk.RIGHT)
+
+        frame2ua = tk.Frame(framed)
+        frame2ua.pack(side=tk.LEFT)
+
+        frame2ub = tk.Frame(framed)
+        frame2ub.pack(side=tk.RIGHT)
+
+        # setting the buttons
+        buttons_config = {
+            "relief": tk.RAISED,
+            "padx": 8,
+            "pady":  4
+        }
+
+        button_solo = tk.Button(
+            frame1ua,
+            text='Play solo',
+            # command=pass,
+            **buttons_config
+        )
+
+        button_multiplayer = tk.Button(
+            frame1ub,
+            text='Play Multiplayer',
+            # command=pass,
+            **buttons_config
+        )
+
+        button_AI = tk.Button(
+            frame2ua,
+            text='Play vs AI',
+            # command=pass,
+            **buttons_config
+        )
+
+        button_records = tk.Button(
+            frame2ub,
+            text='View Records',
+            # command=pass,
+            **buttons_config
+        )
+
+        # TODO: Fix the packing situation
+
+        button_solo.pack()
+        button_multiplayer.pack()
+        button_AI.pack()
+        button_records.pack()
 
 
 if __name__ == '__main__':
