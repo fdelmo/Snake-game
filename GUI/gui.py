@@ -1,7 +1,4 @@
-from pickle import FRAME
-from pickletools import UP_TO_NEWLINE
 import tkinter as tk
-from turtle import down
 from typing import *
 
 
