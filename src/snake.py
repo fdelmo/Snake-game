@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Tuple
 
 
 class Direction(Enum):
@@ -17,13 +18,13 @@ class Snake:
     """Snake class. The color is hardcoded in the class, all other
     attributes and variables are passed when creating an instance."""
 
-    def __init__(self, block_size, bounds):
+    def __init__(self, block_size: int, bounds: Tuple[int]):
         self.block_size = block_size
         self.bounds = bounds
         self.color = (0, 255, 125)
         self.spawn()
 
-    def spawn(self):
+    def spawn(self) -> None:
         """Resets the snake to the initial state"""
         self.length = 3
         self.direction = Direction.DOWN
@@ -33,11 +34,11 @@ class Snake:
             (self.block_size, 3*self.block_size)
         ]
 
-    def eat(self):
+    def eat(self) -> None:
         """Method to define the behavior or the snake when it eats a food."""
         self.length += 1
 
-    def check_tail_collision(self):
+    def check_tail_collision(self) -> None:
         """
         This method checks if the head of the snake is in the same position as
         any other of its body segments and returns True if it is.
@@ -50,7 +51,7 @@ class Snake:
 
         return self_collision
 
-    def draw(self, game, window):
+    def draw(self, game, window) -> None:
         """Draws Snake in the display using an instance of pygame as 'game'
         and an instance of the surface to be drawn to as ' window' """
         for block in self.body:
@@ -58,7 +59,7 @@ class Snake:
                 window, self.color,
                 (block[0], block[1], self.block_size, self.block_size))
 
-    def move(self):
+    def move(self) -> None:
         """
         Checks in what direction the snake looks and 'moves' it on 
         block in that direction by drawing a block in front and removing
@@ -91,7 +92,7 @@ class Snake:
         if self.length < len(self.body):
             self.body.pop(0)
 
-    def steer(self, game):
+    def steer(self, game) -> None:
         """This method changes the direction of the snake"""
         keys = game.key.get_pressed()
         new_direction = self.direction

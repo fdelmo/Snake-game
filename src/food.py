@@ -1,17 +1,19 @@
 import random
+from snake import Snake
+from typing import Tuple
 
 
 class Food:
     """Food class."""
 
-    def __init__(self, block_size, bounds, snake):
+    def __init__(self, block_size: int, bounds: Tuple[int], snake: Snake):
         self.color = (255, 0, 0)
         self.block_size = block_size
         self.bounds = bounds
         self.position = (0, 0)
         self.spawn(snake)
 
-    def draw(self, game, window):
+    def draw(self, game, window) -> None:
         """Method to draw the food as a rectangle of size size_block
         on the game window."""
         game.draw.rect(
@@ -20,7 +22,7 @@ class Food:
              self.block_size, self.block_size)
         )
 
-    def spawn(self, snake):
+    def spawn(self, snake: Snake) -> None:
         """
         Method to spawn the Food in a random position in the screen.
         blocks_x and blocks_y count how many numbers of block fit in

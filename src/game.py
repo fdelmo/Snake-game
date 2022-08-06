@@ -2,8 +2,9 @@ import pygame
 import pickle
 from datetime import date
 from pygame.constants import CONTROLLER_BUTTON_MAX
-from src.snake import *
-from src.food import Food
+from snake import *
+from food import Food
+from typing import List, Dict
 
 #global variables
 BOUNDS = (500, 500)
@@ -23,7 +24,7 @@ class Game:
         self.snake = Snake(BLOCK_SIZE, BOUNDS)
         self.food = Food(BLOCK_SIZE, BOUNDS, self.snake)
 
-    def print_score(self, window, pos_x, pos_y):
+    def print_score(self, window: pygame.display, pos_x: int, pos_y: int) -> None:
         """
         This method is to  be called in the later method 'draw'. This one takes
         responsability of rendering the score in the screen on each frame.
@@ -33,7 +34,7 @@ class Game:
 
         window.blit(score_render, (pos_x, pos_y))
 
-    def read_records(self):
+    def read_records(self) -> List[Dict]:
         """
         Method to read historic records of the game from disk. Returns a list
         with dictionaries with info of the top 5 records.
@@ -49,7 +50,7 @@ class Game:
 
         return records
 
-    def save_record(self, records, user):
+    def save_record(self, records: List[Dict], user: str) -> None:
         """
         This method checks if the current score is in the top N records and stores
         it in the correct position if it is. It also stores the date and username.
@@ -71,7 +72,7 @@ class Game:
         with open('records.pck', 'wb') as handle:
             pickle.dump(records, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    def check_record(self):
+    def check_record(self) -> bool:
         """
         This method checks if the current score is in the top 5 record scores.
         If so, it calls the save_record method.
@@ -88,13 +89,13 @@ class Game:
         else:
             return False
 
-    def events(self, game):
+    def events(self, game: pygame) -> bool:
         """Returns True if the game need to be stopped"""
         for event in game.event.get():
             if event.type == game.QUIT:
                 return True
 
-    def check_food(self):
+    def check_food(self) -> None:
         """
         This methid checks if the head of the snake is in the position of the
         food. If True, then the snake eats the food and the food respawns.
@@ -105,7 +106,7 @@ class Game:
             self.food.spawn(self.snake)
             self.score += 10
 
-    def evolve(self, game):
+    def evolve(self, game: pygame) -> None:
         """
         This method evolves the state of the game by moving the snake
         and creating new food if the last was eaten. 
@@ -116,7 +117,7 @@ class Game:
         self.check_food()
         self.game_over = self.snake.check_tail_collision()
 
-    def draw(self, game, window):
+    def draw(self, game: pygame, window: pygame.display) -> None:
         """
         This method draws all elements to the screen. Has to be run every 
         frame and only after all events and game logics have been checked
