@@ -1,3 +1,4 @@
+from doctest import ELLIPSIS_MARKER
 import pygame
 import pickle
 from datetime import date
@@ -15,16 +16,17 @@ BLOCK_SIZE = 25
 class Game:
     """Game class. Game logic and variables are self contained in the object"""
 
-    def __init__(self, time: int = 90, caption: str = "PySnake") -> None:
+    def __init__(self, max_fps: int = 11, caption: str = "PySnake") -> None:
         # initialization of pygame and window
         pygame.init()
         self.window = pygame.display.set_mode(BOUNDS)
         pygame.display.set_caption(caption)
         pygame.mouse.set_visible(False)
+        self.clock = pygame.time.Clock()
 
         # game variables
         self.score = 0
-        self.time = time
+        self.max_fps = max_fps
         self.score_font = pygame.font.Font('freesansbold.ttf', 16)
         self.game_over = False
 
@@ -146,7 +148,8 @@ class Game:
         """
         Step of the game's main loop.
         """
-        pygame.time.delay(self.time)
+        # pygame.time.delay(self.time)
+        self.clock.tick(self.max_fps)
         self.events()
         self.evolve()
         self.draw()
@@ -154,7 +157,7 @@ class Game:
 
 def main():
     """Main function"""
-    game = Game()
+    game = Game(max_fps=12)
 
     while not game.game_over:
         game.play_step()

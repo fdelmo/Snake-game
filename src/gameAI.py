@@ -1,3 +1,5 @@
+from audioop import maxpp
+from lib2to3.pgen2.driver import Driver
 from game import *
 
 
@@ -7,8 +9,8 @@ class GameAI(Game):
     methods that have to do with human input so that the Agent can play.
     """
 
-    def __init__(self, time: int = 60, caption: str = "PySnake - Training AI") -> None:
-        super().__init__(time, caption)
+    def __init__(self, max_fps: int = 20, caption: str = "PySnake - Training AI") -> None:
+        super().__init__(max_fps, caption)
         self.reward = 0
 
     def evolve(self, direction: Direction) -> None:
@@ -18,7 +20,7 @@ class GameAI(Game):
         It checks if the game is over and returns the status.
         It takes a parameter as direction so that the AI Agent can play.
 
-        Reqwrites the method in Game class.
+        Rewrites the method in Game class.
         """
         self.snake.steer_AI(new_dir=direction)
         self.snake.move()
@@ -30,16 +32,24 @@ class GameAI(Game):
         Step of the game's main loop.
         Rewrites the method in Game class.
         """
-        pygame.time.delay(self.time)
+        # pygame.time.delay(self.time)
+        self.clock.tick(self.max_fps)
         self.events()
         self.evolve(direction=direction)
         self.draw()
 
+    def reset(self) -> None:
+        self.score = 0
+        self.game_over = False
+
+        self.snake.spawn()
+
 
 if __name__ == '__main__':
-    game = GameAI()
+    game = GameAI(max_fps=30)
 
-    while not game.game_over:
-        game.play_step(Direction.RIGHT)
+    while True:
+        game.play_step(direction=Direction.RIGHT)
 
-    pygame.quit()
+        if game.game_over:
+            game.reset()

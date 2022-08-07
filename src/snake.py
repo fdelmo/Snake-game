@@ -6,10 +6,10 @@ import pygame
 class Direction(Enum):
     """Class for directions. Directions can be called by
     using commands of the rype 'Direction.DOWN' """
-    UP = 2
-    DOWN = 3
-    RIGHT = -2
-    LEFT = -3
+    UP = 0
+    DOWN = 2
+    RIGHT = 1
+    LEFT = 3
 
     def __sub__(self, other):
         return self.value - other.value
@@ -107,7 +107,7 @@ class Snake:
         elif keys[pygame.K_LEFT]:
             new_direction = Direction.LEFT
 
-        if abs(self.direction-new_direction) != 1:
+        if abs(self.direction-new_direction) != 2:
             self.direction = new_direction
 
     def steer_AI(self, new_dir: Direction) -> None:
@@ -116,5 +116,5 @@ class Snake:
         direction as a parameter. This is implemented so that the AI
         agent can play the game.
         """
-        if abs(self.direction - new_dir) != 1:
+        if abs(self.direction - new_dir) != 2:
             self.direction = new_dir
