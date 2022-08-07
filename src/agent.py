@@ -1,4 +1,4 @@
-from game import Game
+from gameAI import GameAI
 from snake import Direction
 import random
 import torch
@@ -25,10 +25,23 @@ class Agent:
 
 
 def train_agent(agent: Agent):
-    game = Game()
+    game = GameAI()
     while True:
         # get state of the game
         state = agent.get_state(game)
 
-        # get action to perform
+        # get action to perform (direction to move)
         action = agent.get_action(state)
+
+        # evolve the game one step further with the chose action and get new state
+        game.play_step(direction=action)
+        state_new = agent.get_state(game)
+
+        # store info in memory for long term memory training after
+        agent.remember(
+            state=state,
+            action=action,
+            reward=game.reward,
+            next_state=state_new,
+            game_over=game.game_over
+        )

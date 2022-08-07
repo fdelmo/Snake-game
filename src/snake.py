@@ -109,3 +109,12 @@ class Snake:
 
         if abs(self.direction-new_direction) != 1:
             self.direction = new_direction
+
+    def steer_AI(self, new_dir: Direction) -> None:
+        """
+        This method changes the direction of the snake given the new
+        direction as a parameter. This is implemented so that the AI
+        agent can play the game.
+        """
+        if abs(self.direction - new_dir) != 1:
+            self.direction = new_dir

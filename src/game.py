@@ -1,4 +1,3 @@
-from typing_extensions import Self
 import pygame
 import pickle
 from datetime import date
@@ -6,6 +5,7 @@ from pygame.constants import CONTROLLER_BUTTON_MAX
 from snake import *
 from food import Food
 from typing import List, Dict
+
 
 #global variables
 BOUNDS = (500, 500)
@@ -15,15 +15,16 @@ BLOCK_SIZE = 25
 class Game:
     """Game class. Game logic and variables are self contained in the object"""
 
-    def __init__(self):
+    def __init__(self, time: int = 90, caption: str = "PySnake") -> None:
         # initialization of pygame and window
         pygame.init()
         self.window = pygame.display.set_mode(BOUNDS)
-        pygame.display.set_caption("PySnake")
+        pygame.display.set_caption(caption)
         pygame.mouse.set_visible(False)
 
         # game variables
         self.score = 0
+        self.time = time
         self.score_font = pygame.font.Font('freesansbold.ttf', 16)
         self.game_over = False
 
@@ -118,7 +119,7 @@ class Game:
         """
         This method evolves the state of the game by moving the snake
         and creating new food if the last was eaten. 
-        It checks if the gamee is over and returns the status
+        It checks if the game is over and returns the status
         """
         self.snake.steer()
         self.snake.move()
@@ -141,11 +142,11 @@ class Game:
 
         pygame.display.flip()
 
-    def play_step(self, time: int = 90) -> None:
+    def play_step(self) -> None:
         """
         Step of the game's main loop.
         """
-        pygame.time.delay(time)
+        pygame.time.delay(self.time)
         self.events()
         self.evolve()
         self.draw()
@@ -155,7 +156,7 @@ def main():
     """Main function"""
     game = Game()
 
-    while game.game_over == False:
+    while not game.game_over:
         game.play_step()
 
     game.check_record()
