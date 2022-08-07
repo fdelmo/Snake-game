@@ -1,3 +1,4 @@
+from typing_extensions import Self
 import pygame
 import pickle
 from datetime import date
@@ -15,6 +16,12 @@ class Game:
     """Game class. Game logic and variables are self contained in the object"""
 
     def __init__(self):
+        # initialization of pygame and window
+        pygame.init()
+        self.window = pygame.display.set_mode(BOUNDS)
+        pygame.display.set_caption("PySnake")
+        pygame.mouse.set_visible(False)
+
         # game variables
         self.score = 0
         self.score_font = pygame.font.Font('freesansbold.ttf', 16)
@@ -24,7 +31,7 @@ class Game:
         self.snake = Snake(BLOCK_SIZE, BOUNDS)
         self.food = Food(BLOCK_SIZE, BOUNDS, self.snake)
 
-    def print_score(self, window: pygame.display, pos_x: int, pos_y: int) -> None:
+    def print_score(self, pos_x: int, pos_y: int) -> None:
         """
         This method is to  be called in the later method 'draw'. This one takes
         responsability of rendering the score in the screen on each frame.
@@ -32,7 +39,7 @@ class Game:
         score_render = self.score_font.render(
             f'Score: {self.score}', True, (255, 97, 3))
 
-        window.blit(score_render, (pos_x, pos_y))
+        self.window.blit(score_render, (pos_x, pos_y))
 
     def read_records(self) -> List[Dict]:
         """
@@ -89,11 +96,12 @@ class Game:
         else:
             return False
 
-    def events(self, game: pygame) -> bool:
-        """Returns True if the game need to be stopped"""
-        for event in game.event.get():
-            if event.type == game.QUIT:
-                return True
+    def events(self) -> bool:
+        """Quits the game if the game need to be stopped"""
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
 
     def check_food(self) -> None:
         """
@@ -106,54 +114,49 @@ class Game:
             self.food.spawn(self.snake)
             self.score += 10
 
-    def evolve(self, game: pygame) -> None:
+    def evolve(self) -> None:
         """
         This method evolves the state of the game by moving the snake
         and creating new food if the last was eaten. 
         It checks if the gamee is over and returns the status
         """
-        self.snake.steer(game)
+        self.snake.steer()
         self.snake.move()
         self.check_food()
         self.game_over = self.snake.check_tail_collision()
 
-    def draw(self, game: pygame, window: pygame.display) -> None:
+    def draw(self) -> None:
         """
         This method draws all elements to the screen. Has to be run every 
         frame and only after all events and game logics have been checked
         """
-        window.fill((0, 0, 0))
+        self.window.fill((0, 0, 0))
 
         # draw all objects in screen
-        self.snake.draw(game, window)
-        self.food.draw(game, window)
+        self.snake.draw(pygame, self.window)
+        self.food.draw(pygame, self.window)
 
         # draw score
-        self.print_score(window, pos_x=BOUNDS[1]-100, pos_y=10)
+        self.print_score(pos_x=BOUNDS[1]-100, pos_y=10)
 
-        game.display.flip()
+        pygame.display.flip()
+
+    def play_step(self, time: int = 90) -> None:
+        """
+        Step of the game's main loop.
+        """
+        pygame.time.delay(time)
+        self.events()
+        self.evolve()
+        self.draw()
 
 
 def main():
     """Main function"""
-    # initialization of pygame and creation of the window
-    pygame.init()
-    window = pygame.display.set_mode(BOUNDS)
-    pygame.display.set_caption("PySnake")
-    pygame.mouse.set_visible(False)
-
     game = Game()
 
-    stop = False
-
-    while (not stop) & (game.game_over == False):
-        pygame.time.delay(90)
-
-        stop = game.events(pygame)
-
-        game.evolve(pygame)
-
-        game.draw(pygame, window)
+    while game.game_over == False:
+        game.play_step()
 
     game.check_record()
 

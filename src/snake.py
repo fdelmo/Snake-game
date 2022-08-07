@@ -1,5 +1,6 @@
 from enum import Enum
 from typing import Tuple
+import pygame
 
 
 class Direction(Enum):
@@ -92,18 +93,18 @@ class Snake:
         if self.length < len(self.body):
             self.body.pop(0)
 
-    def steer(self, game) -> None:
+    def steer(self) -> None:
         """This method changes the direction of the snake"""
-        keys = game.key.get_pressed()
+        keys = pygame.key.get_pressed()
         new_direction = self.direction
 
-        if keys[game.K_UP]:
+        if keys[pygame.K_UP]:
             new_direction = Direction.UP
-        elif keys[game.K_DOWN]:
+        elif keys[pygame.K_DOWN]:
             new_direction = Direction.DOWN
-        elif keys[game.K_RIGHT]:
+        elif keys[pygame.K_RIGHT]:
             new_direction = Direction.RIGHT
-        elif keys[game.K_LEFT]:
+        elif keys[pygame.K_LEFT]:
             new_direction = Direction.LEFT
 
         if abs(self.direction-new_direction) != 1:

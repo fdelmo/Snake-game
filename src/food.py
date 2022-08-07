@@ -42,4 +42,3 @@ class Food:
             if (x, y) not in snake.body:
                 self.position = (x, y)
                 ok = True
-            #self.position = (x, y)
