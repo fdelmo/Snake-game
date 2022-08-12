@@ -11,7 +11,6 @@ class GameAI(Game):
 
     def __init__(self, max_fps: int = 20, caption: str = "PySnake - Training AI") -> None:
         super().__init__(max_fps, caption)
-        self.reward = 0
 
     def evolve(self, direction: Direction) -> None:
         """
@@ -26,6 +25,8 @@ class GameAI(Game):
         self.snake.move()
         self.check_food()
         self.game_over = self.snake.check_tail_collision()
+        if self.game_over:
+            self.reward = -50
 
     def play_step(self, direction: Direction) -> None:
         """
@@ -33,6 +34,7 @@ class GameAI(Game):
         Rewrites the method in Game class.
         """
         # pygame.time.delay(self.time)
+        self.reward = 0
         self.clock.tick(self.max_fps)
         self.events()
         self.evolve(direction=direction)

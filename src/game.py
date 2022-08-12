@@ -115,7 +115,8 @@ class Game:
         if self.snake.body[-1] == self.food.position:
             self.snake.eat()
             self.food.spawn(self.snake)
-            self.score += 10
+            self.score += 1
+            self.reward = 10
 
     def evolve(self) -> None:
         """

@@ -14,6 +14,8 @@ class Agent:
     def __init__(self) -> None:
         self.n_games = 0
         self.epsilon = 0  # randomness of agent actions
+        self.lr = 0.01  # learning rate
+        self.gamma = 0.9  # discount rate
         self.memory = deque(maxlen=MAX_MEMORY)
         self.model = None  # TODO
         self.trainer = None  # TODO
