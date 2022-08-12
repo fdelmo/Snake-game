@@ -1,7 +1,7 @@
 from gameAI import *
 from snake import Direction
 import random
-import torch
+import tensorflow as tf
 from collections import deque
 import numpy as np
 
@@ -70,9 +70,9 @@ class Agent:
         if random.randint(0, 200) < self.epsilon:
             move = random.randint(0, 2)  # 0=straigth, 1=right, 2=left
         else:
-            state_trans = torch.tensor(state, dtype=torch.float)
+            state_trans = tf.convert_to_tensor(state, dtype=tf.float64)
             prediction = self.model.predict(state_trans)
-            move = torch.argmax(prediction).item()
+            move = tf.argmax(prediction).numpy()
 
         # transform the 3 possible actions into the 4 possible directions
         # (needed for the game logic to work properly)
