@@ -1,0 +1,6 @@
+in the trainer, maybe change the datatypes of the tensors... might make it faster and it might not be needed
+to have the extra memory needed for float64.
+
+maybe include dropouts
+
+maybe change the state representation

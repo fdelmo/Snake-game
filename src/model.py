@@ -2,6 +2,7 @@ import tensorflow as tf
 from tensorflow.python.keras import layers
 from tensorflow.python.keras.optimizers import adam_v2
 from tensorflow.python.keras import losses
+from typing import List
 import os
 
 
@@ -10,29 +11,40 @@ class SimpleModel(tf.keras.Model):
     Model class. Quite simple. Complete this docstring is a #TODO
     """
 
-    def __init__(self, input_size, hidden_size, target_size):
-        super().__init__()
+    def __init__(self, hidden_sizes: List, target_size: int) -> None:
         """
-        NN with 2 hidden layers of size 'hiden_sieze' and an output layer with
-        size 'target_size' activated with a softmax function since we aim to 
-        predict one of 3 possible outputs only (classification).
-        """
-        self.dense1 = layers.Dense(
-            hidden_size, activation='relu', name='hidden1')
-        self.dense2 = layers.Dense(
-            hidden_size, activation='relu', name='hidden2')
-        self.dense3 = layers.Dense(
-            target_size, activation='softmax', name='output')  # output layer
+        Initialize a QNET with N hidden Dense layers, where N is the length of the 
+        hidden_sizes list. Each layer i has n nodes, being n the value of ith
+        element of the hidden_sizes list. These layers are activated with a relu
+        function. The first layer is set to accept inputs of shape (1,input_dim).
 
-        # TODO: Play with the idea of Dropouts and tune the model
+        Finally a Dense layer of target_size nodes without activation is used as
+        an output layer.
+        """
+        super().__init__()
+        self.hidden_layers = []
+        for count, layer_size in enumerate(hidden_sizes):
+            if count == 0:
+                self.hidden_layers.append(layers.Dense(
+                    layer_size, activation='relu', name=f'hidden{count}'))
+            else:
+                self.hidden_layers.append(layers.Dense(
+                    layer_size, activation='relu', name=f'hidden{count}'))
+
+        self.output_layer = layers.Dense(
+            target_size, activation=None, name='output')
+
+        # TODO: Maybe adding Dropouts to improve the model
 
     def call(self, input):
         """
         Will be called when predict and train.
         """
-        x = self.dense1(input)
-        x = self.dense2(x)
-        return self.dense3(x)
+        for layer in self.hidden_layers:
+            x = layer(input)
+            input = x
+
+        return self.output_layer(x)
 
     def save(self, file_name='model.pth'):
         """
@@ -42,14 +54,35 @@ class SimpleModel(tf.keras.Model):
         if not os.path.exists(folder_path):
             os.makedirs(folder_path)
 
-        file_name = os.path.join(folder_path, file_name)
-        self.save(file_name=file_name)
+        file_path = os.path.join(folder_path, file_name)
+        self.save(file_name=file_path)
 
 
 class Trainer:
+    """
+    Trainer class. Includes the training algorithm as well as
+    the optimizer.
+    """
+
     def __init__(self, model, lr, gamma):
         self.lr = lr
         self.gamma = gamma
         self.model = model
         self.optimizer = adam_v2(learning_rate=lr)
         self.loss = losses.MeanSquaredError()
+
+    def train(self, states, actions, rewards, new_states, game_overs):
+        state = tf.Tensor(states, dtype=tf.float64)
+        action = tf.Tensor(actions, dtype=tf.float64)
+        reward = tf.Tensor(rewards, dtype=tf.float64)
+        new_state = tf.Tensor(new_states, dtype=tf.float64)
+        game_over = tf.Tensor(game_overs, dtype=tf.float64)
+
+        # ensure we have the correct dimensionality of the Tensors even when they
+        # are 1D
+        if len(state.shape) == 1:
+            state = tf.expand_dims(state, 0)
+            action = tf.expand_dims(action, 0)
+            reward = tf.expand_dims(reward, 0)
+            new_state = tf.expand_dims(new_state, 0)
+            game_over = tf.expand_dims(game_over, 0)

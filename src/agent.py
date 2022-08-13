@@ -4,6 +4,7 @@ import random
 import tensorflow as tf
 from collections import deque
 import numpy as np
+from model import *
 
 
 MAX_MEMORY = 10**5
@@ -17,16 +18,16 @@ class Agent:
         self.lr = 0.01  # learning rate
         self.gamma = 0.9  # discount rate
         self.memory = deque(maxlen=MAX_MEMORY)
-        self.model = None  # TODO
-        self.trainer = None  # TODO
+        self.model = SimpleModel([126, 126], 3)
+        self.trainer = Trainer()
 
-    def get_state(self, game: GameAI) -> np.array[int]:
+    def get_state(self, game: GameAI) -> np.array(int):
         """
         Get the current state of the game and output it as an np.array of integers.
 
         Parameters outputed (in this order, concatenated):
             - Direction [UP, DOWN, RIGHT, LEFT] (0 or 1 representing the boolean state)
-            - Image of the game in "grid" mode: 
+            - Image of the game in "grid" mode:
                 - 0 = empty space
                 - 1 = snake's body (not head)
                 - 2 = snake's head

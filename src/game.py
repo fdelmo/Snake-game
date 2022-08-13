@@ -6,6 +6,7 @@ from pygame.constants import CONTROLLER_BUTTON_MAX
 from snake import *
 from food import Food
 from typing import List, Dict
+import numpy as np
 
 
 #global variables
