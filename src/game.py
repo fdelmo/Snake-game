@@ -83,7 +83,7 @@ class Game:
         with open('records.pck', 'wb') as handle:
             pickle.dump(records, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    def check_record(self) -> bool:
+    def check_record(self, user: str = 'Test_user') -> bool:
         """
         This method checks if the current score is in the top 5 record scores.
         If so, it calls the save_record method.
@@ -92,10 +92,10 @@ class Game:
         records = self.read_records()
 
         if len(records) < 5:
-            self.save_record(records, 'Test_user')
+            self.save_record(records, user)
             return True
         elif self.score > records[-1]["record"]:
-            self.save_record(records, 'Test_user')
+            self.save_record(records, user)
             return True
         else:
             return False

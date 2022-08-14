@@ -14,6 +14,9 @@ class Direction(Enum):
     def __sub__(self, other):
         return self.value - other.value
 
+    def __add__(self, other_value: int) -> int:
+        return self.value + other_value
+
 
 class Snake:
     """Snake class. The color is hardcoded in the class, all other

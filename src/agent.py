@@ -5,7 +5,8 @@ import tensorflow as tf
 from collections import deque
 import numpy as np
 from model import *
-
+import plotter
+from plotter import plot
 
 MAX_MEMORY = 10**5
 BATCH_SIZE = 1000
@@ -14,12 +15,13 @@ BATCH_SIZE = 1000
 class Agent:
     def __init__(self) -> None:
         self.n_games = 0
+        self.record = 0
         self.epsilon = 0  # randomness of agent actions
         self.lr = 0.01  # learning rate
         self.gamma = 0.9  # discount rate
         self.memory = deque(maxlen=MAX_MEMORY)
         self.model = SimpleModel([126, 126], 3)
-        self.trainer = Trainer()
+        self.trainer = Trainer(self.model, self.lr, self.gamma)
 
     def get_state(self, game: GameAI) -> np.array(int):
         """
@@ -56,7 +58,7 @@ class Agent:
 
         return np.array(state, dtype=int)
 
-    def get_action(self, state, game: GameAI):
+    def get_action(self, game: GameAI, state):
         """
         Method to choose the action that the agent will perform in each
         play_step. The agent will choose to move right (1), left (2) or go
@@ -110,25 +112,30 @@ class Agent:
 
 
 def train_agent(agent: Agent, n_games: int):
+    scores = []
+    mean_scores = []
+    game_total_score = 0
     game = GameAI(max_fps=30)
     for iteration in range(n_games):
         # get state of the game
         state = agent.get_state(game)
 
         # get action to perform (direction to move)
-        action = agent.get_action(game, state)
+        action = agent.get_action(game=game, state=state)
 
         # evolve the game one step further with the chose action and get new state
         game.play_step(direction=action)
         state_new = agent.get_state(game)
 
+        # return the game over status as an integer
+        game_over = int(game.game_over)
         # store info in memory for long term memory training after
         agent.remember(
             state=state,
             action=action,
             reward=game.reward,
             next_state=state_new,
-            game_over=game.game_over
+            game_over=game_over
         )
 
         # trian the agent in short memory
@@ -137,7 +144,7 @@ def train_agent(agent: Agent, n_games: int):
             action=action,
             reward=game.reward,
             next_state=state_new,
-            game_over=game.game_over
+            game_over=game_over
         )
 
         # when game is over: train on long memory, plot and update results, and reset the game
@@ -145,3 +152,19 @@ def train_agent(agent: Agent, n_games: int):
             game.reset()
             agent.n_games += 1
             agent.train_long_memory()
+
+            # save the best version of the model:
+            # this might be changed later to include different levels of models
+            if game.score > agent.record:
+                agent.record = game.score
+                agent.model.save()
+
+            scores.append(game.score)
+            game_total_score += game.score
+            mean_scores.append(game_total_score/agent.n_games)
+            plot(scores=scores, mean_scores=mean_scores)
+
+
+if __name__ == '__main__':
+    agent = Agent()
+    train_agent(agent=agent, n_games=200)
