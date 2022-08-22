@@ -1,4 +1,5 @@
 import tensorflow as tf
+import numpy as np
 from tensorflow.python.keras import layers
 from tensorflow.python.keras.optimizers import adam_v2
 from tensorflow.python.keras import losses
@@ -69,7 +70,7 @@ class Trainer:
         self.gamma = gamma  # discount rate
         self.model = model
         self.optimizer = adam_v2.Adam(learning_rate=lr)
-        self.loss = losses.MeanSquaredError()
+        self.loss_object = losses.MeanSquaredError()
 
     def train(self, states, actions, rewards, new_states, game_overs):
         """
@@ -79,7 +80,7 @@ class Trainer:
         action = tf.convert_to_tensor(actions, dtype=tf.float64)
         reward = tf.convert_to_tensor(rewards, dtype=tf.float64)
         new_state = tf.convert_to_tensor(new_states, dtype=tf.float64)
-        # game_over = tf.convert_to_tensor(game_overs, dtype=tf.float64)
+        game_over = tf.convert_to_tensor(game_overs, dtype=tf.float64)
 
         # ensure we have the correct dimensionality of the Tensors even when they
         # are 1D
@@ -92,24 +93,24 @@ class Trainer:
             game_over = (game_overs, )
 
         # implementation of Bellman's equation
-
-        # get Q for current state
-        predictions = self.model.predict(state)  # 3 values
-
-        target = tf.identity(predictions)
-        for i in state.shape[0]:
-            if not game_over[i]:
-                Q_new = reward[i] + self.gamma * \
-                    tf.math.reduce_max(
-                        self.model.predict(new_state[i])).numpy()
-            else:
-                Q_new = reward[i]
-
-        target[i][tf.argmax(action[i]).numpy()] = Q_new
-
         with tf.GradientTape() as tape:
+            # get Q for current state
+            predictions = self.model(state)  # 3 values
+
+            target = np.copy(predictions)
+            for i in range(state.shape[0]):
+                if not game_over[i]:
+                    Q_new = reward[i] + self.gamma * \
+                        tf.math.reduce_max(
+                            self.model(tf.expand_dims(new_state[i], 0))).numpy()
+                else:
+                    Q_new = reward[i]
+
+                target[i][int(action[i])] = Q_new
+
+        # with tf.GradientTape() as tape:
             # calculate the loss function for the step
-            l = self.loss(y_true=target, y_pred=predictions)
+            l = self.loss_object(y_true=target, y_pred=predictions)
             grads = tape.gradient(l, self.model.trainable_variables)
 
         self.optimizer.apply_gradients(

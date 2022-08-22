@@ -9,8 +9,8 @@ def plot(scores, mean_scores) -> None:
     plt.ylabel('Scores')
 
     plt.plot(scores)
-    plt.plos(mean_scores)
+    plt.plot(mean_scores)
     plt.ylim(ymin=0)
 
-    plt.sleep(0.1)
+    plt.pause(0.1)
     plt.show()

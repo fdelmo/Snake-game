@@ -20,7 +20,7 @@ class Agent:
         self.lr = 0.01  # learning rate
         self.gamma = 0.9  # discount rate
         self.memory = deque(maxlen=MAX_MEMORY)
-        self.model = SimpleModel([126, 126], 3)
+        self.model = SimpleModel([512, 512], 3)
         self.trainer = Trainer(self.model, self.lr, self.gamma)
 
     def get_state(self, game: GameAI) -> np.array(int):
@@ -70,18 +70,26 @@ class Agent:
         beginning of the training, in order to try to avoid local extrema of the 
         Q function.
         """
-        self.epsilon = 100 - self.n_games
+        self.epsilon = 150 - self.n_games
 
         if random.randint(0, 200) < self.epsilon:
             move = random.randint(0, 2)  # 0=straigth, 1=right, 2=left
         else:
             state_trans = tf.convert_to_tensor(state, dtype=tf.float64)
-            prediction = self.model.predict(state_trans)
-            move = tf.argmax(prediction).numpy()
+            state_trans = tf.expand_dims(state_trans, 0)
+            prediction = self.model(state_trans)
+            move = int(tf.argmax(prediction, axis=1))
 
         # transform the 3 possible actions into the 4 possible directions
         # (needed for the game logic to work properly)
-        return (game.snake.direction + (2**move-1)) % 4
+        return move
+
+    def action_to_direction(self, game: GameAI, move: int) -> Direction:
+        """
+        Transform the action predicted by the model (0,1,2) =
+        (straight, right, left) into a direction for the game input.
+        """
+        return Direction((game.snake.direction + (2**move-1)) % 4)
 
     def remember(self, state, action, reward, next_state, game_over) -> None:
         """
@@ -115,16 +123,19 @@ def train_agent(agent: Agent, n_games: int):
     scores = []
     mean_scores = []
     game_total_score = 0
-    game = GameAI(max_fps=30)
-    for iteration in range(n_games):
+    game = GameAI(max_fps=40)
+    while True:
         # get state of the game
         state = agent.get_state(game)
 
         # get action to perform (direction to move)
         action = agent.get_action(game=game, state=state)
 
+        # transform the action into direction input
+        direction = agent.action_to_direction(game, action)
+
         # evolve the game one step further with the chose action and get new state
-        game.play_step(direction=action)
+        game.play_step(direction=direction)
         state_new = agent.get_state(game)
 
         # return the game over status as an integer
@@ -143,14 +154,16 @@ def train_agent(agent: Agent, n_games: int):
             state=state,
             action=action,
             reward=game.reward,
-            next_state=state_new,
+            new_state=state_new,
             game_over=game_over
         )
 
         # when game is over: train on long memory, plot and update results, and reset the game
         if game.game_over:
-            game.reset()
             agent.n_games += 1
+            print(
+                f'Game {agent.n_games}. Score: {game.score}')
+            game.reset()
             agent.train_long_memory()
 
             # save the best version of the model:
@@ -162,9 +175,12 @@ def train_agent(agent: Agent, n_games: int):
             scores.append(game.score)
             game_total_score += game.score
             mean_scores.append(game_total_score/agent.n_games)
-            plot(scores=scores, mean_scores=mean_scores)
+            # plot(scores=scores, mean_scores=mean_scores)
+
+            if agent.n_games == n_games:
+                break
 
 
 if __name__ == '__main__':
     agent = Agent()
-    train_agent(agent=agent, n_games=200)
+    train_agent(agent=agent, n_games=1000)

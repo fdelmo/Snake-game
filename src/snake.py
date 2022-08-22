@@ -12,7 +12,16 @@ class Direction(Enum):
     LEFT = 3
 
     def __sub__(self, other):
-        return self.value - other.value
+        """
+        First try works when the player interacts with the game
+        via keyboard. The second works when the AI plays the game.
+        """
+        try:
+            result = self.value - other.value
+        except:
+            result = self.value-other
+
+        return result
 
     def __add__(self, other_value: int) -> int:
         return self.value + other_value
@@ -22,10 +31,11 @@ class Snake:
     """Snake class. The color is hardcoded in the class, all other
     attributes and variables are passed when creating an instance."""
 
-    def __init__(self, block_size: int, bounds: Tuple[int]):
+    def __init__(self, block_size: int, bounds: Tuple[int], die_on_edges: bool = False):
         self.block_size = block_size
         self.bounds = bounds
         self.color = (0, 255, 125)
+        self.die_on_edges = die_on_edges
         self.spawn()
 
     def spawn(self) -> None:
@@ -33,9 +43,11 @@ class Snake:
         self.length = 3
         self.direction = Direction.DOWN
         self.body = [
-            (self.block_size, self.block_size),
-            (self.block_size, 2*self.block_size),
-            (self.block_size, 3*self.block_size)
+            (10*self.block_size, self.block_size),
+            (10*self.block_size, 2*self.block_size),
+            (10*self.block_size, 3*self.block_size),
+            (10*self.block_size, 4*self.block_size),
+            (10*self.block_size, 5*self.block_size),
         ]
 
     def eat(self) -> None:
@@ -51,6 +63,12 @@ class Snake:
 
         for i in range(len(self.body) - 1):
             if self.body[-1] == self.body[i]:
+                self_collision = True
+
+        if self.die_on_edges:
+            if (self.body[-1][0] >= self.bounds[0]) or (self.body[-1][0] < 0):
+                self_collision = True
+            elif (self.body[-1][1] >= self.bounds[1]) or (self.body[-1][1] < 0):
                 self_collision = True
 
         return self_collision
@@ -71,22 +89,22 @@ class Snake:
         """
         curr_head = self.body[-1]
         if self.direction == Direction.DOWN:
-            if curr_head[1]+self.block_size >= self.bounds[1]:
+            if (curr_head[1]+self.block_size >= self.bounds[1]) & (not self.die_on_edges):
                 new_head = (curr_head[0], 0)
             else:
                 new_head = (curr_head[0], curr_head[1]+self.block_size)
         elif self.direction == Direction.UP:
-            if curr_head[1]-self.block_size < 0:
+            if (curr_head[1]-self.block_size < 0) & (not self.die_on_edges):
                 new_head = (curr_head[0], self.bounds[1]-self.block_size)
             else:
                 new_head = (curr_head[0], curr_head[1]-self.block_size)
         elif self.direction == Direction.RIGHT:
-            if curr_head[0]+self.block_size >= self.bounds[0]:
+            if (curr_head[0]+self.block_size >= self.bounds[0]) & (not self.die_on_edges):
                 new_head = (0, curr_head[1])
             else:
                 new_head = (curr_head[0]+self.block_size, curr_head[1])
         elif self.direction == Direction.LEFT:
-            if curr_head[0]-self.block_size < 0:
+            if (curr_head[0]-self.block_size < 0) & (not self.die_on_edges):
                 new_head = (self.bounds[0]-self.block_size, curr_head[1])
             else:
                 new_head = (curr_head[0]-self.block_size, curr_head[1])

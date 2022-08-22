@@ -9,8 +9,8 @@ class GameAI(Game):
     methods that have to do with human input so that the Agent can play.
     """
 
-    def __init__(self, max_fps: int = 20, caption: str = "PySnake - Training AI") -> None:
-        super().__init__(max_fps, caption)
+    def __init__(self, max_fps: int = 20, die_on_edges=True, caption: str = "PySnake - Training AI") -> None:
+        super().__init__(max_fps, die_on_edges=die_on_edges, caption=caption)
 
     def evolve(self, direction: Direction) -> None:
         """
@@ -26,7 +26,7 @@ class GameAI(Game):
         self.check_food()
         self.game_over = self.snake.check_tail_collision()
         if self.game_over:
-            self.reward = -50
+            self.reward = -10
 
     def play_step(self, direction: Direction) -> None:
         """
@@ -45,6 +45,7 @@ class GameAI(Game):
         self.game_over = False
 
         self.snake.spawn()
+        self.food.spawn(self.snake)
 
 
 if __name__ == '__main__':

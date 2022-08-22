@@ -10,14 +10,15 @@ import numpy as np
 
 
 #global variables
-BOUNDS = (500, 500)
+# BOUNDS = (500, 500)
+BOUNDS = (375, 375)
 BLOCK_SIZE = 25
 
 
 class Game:
     """Game class. Game logic and variables are self contained in the object"""
 
-    def __init__(self, max_fps: int = 11, caption: str = "PySnake") -> None:
+    def __init__(self, max_fps: int = 11, die_on_edges=False, caption: str = "PySnake") -> None:
         # initialization of pygame and window
         pygame.init()
         self.window = pygame.display.set_mode(BOUNDS)
@@ -32,7 +33,7 @@ class Game:
         self.game_over = False
 
         # creating of an instance of each object needed
-        self.snake = Snake(BLOCK_SIZE, BOUNDS)
+        self.snake = Snake(BLOCK_SIZE, BOUNDS, die_on_edges=die_on_edges)
         self.food = Food(BLOCK_SIZE, BOUNDS, self.snake)
 
     def print_score(self, pos_x: int, pos_y: int) -> None:
