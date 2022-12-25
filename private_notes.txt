@@ -1,0 +1,5 @@
+complex 250 doesn't learn (or takes inf.) -> Up the random time and the total games to train and see.
+
+Train 250 trains well but could be more aware of itself -> Up model complexity + training time
+
+PositionalSimple -> Doesn't learn.... renormalixe position?
