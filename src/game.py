@@ -10,8 +10,8 @@ import numpy as np
 
 
 #global variables
-# BOUNDS = (500, 500)
-BOUNDS = (375, 375)
+BOUNDS = (500, 500)
+# BOUNDS = (375, 375)
 BLOCK_SIZE = 25
 
 
@@ -118,7 +118,7 @@ class Game:
             self.snake.eat()
             self.food.spawn(self.snake)
             self.score += 1
-            self.reward = 10
+            self.reward = 200
 
     def evolve(self) -> None:
         """

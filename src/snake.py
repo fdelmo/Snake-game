@@ -43,11 +43,11 @@ class Snake:
         self.length = 3
         self.direction = Direction.DOWN
         self.body = [
-            (10*self.block_size, self.block_size),
-            (10*self.block_size, 2*self.block_size),
-            (10*self.block_size, 3*self.block_size),
-            (10*self.block_size, 4*self.block_size),
-            (10*self.block_size, 5*self.block_size),
+            (7*self.block_size, self.block_size + self.block_size*6),
+            (7*self.block_size, 2*self.block_size + self.block_size*6),
+            (7*self.block_size, 3*self.block_size + self.block_size*6),
+            # (10*self.block_size, 4*self.block_size),
+            # (10*self.block_size, 5*self.block_size),
         ]
 
     def eat(self) -> None:

@@ -1,6 +1,5 @@
-in the trainer, maybe change the datatypes of the tensors... might make it faster and it might not be needed
-to have the extra memory needed for float64.
+complex 250 doesn't learn (or takes inf.) -> Up the random time and the total games to train and see.
 
-maybe include dropouts
+Train 250 trains well but could be more aware of itself -> Up model complexity + training time
 
-maybe change the state representation
+PositionalSimple -> Doesn't learn.... renormalixe position?

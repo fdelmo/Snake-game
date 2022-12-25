@@ -26,7 +26,7 @@ class GameAI(Game):
         self.check_food()
         self.game_over = self.snake.check_tail_collision()
         if self.game_over:
-            self.reward = -10
+            self.reward = -50
 
     def play_step(self, direction: Direction) -> None:
         """
